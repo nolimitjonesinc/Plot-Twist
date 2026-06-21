@@ -1,6 +1,6 @@
 // PlotTwist — Vercel serverless function. Calls Claude with the uploaded photo.
 // The API key lives in a Vercel Environment Variable (ANTHROPIC_API_KEY), never in the repo.
-const MODEL = process.env.MODEL || "claude-opus-4-8";
+const MODEL = process.env.MODEL || "claude-haiku-4-5";
 
 const STYLES = {
   triptych:  "a surreal cinematic 'micro-movie' in three quick beats (a moment before, the scene, an escalation after). Give it punchy film-still energy.",
