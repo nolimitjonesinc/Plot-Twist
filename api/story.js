@@ -69,7 +69,7 @@ module.exports = async (req, res) => {
     const payload = {
       model: MODEL,
       max_tokens: 500,
-      output_config: { effort: "low", format: { type: "json_schema", schema: SCHEMA } },
+      output_config: { format: { type: "json_schema", schema: SCHEMA } },
       messages: [{
         role: "user",
         content: [
