@@ -1,6 +1,6 @@
 // PlotTwist — Vercel serverless function. Calls Claude with the uploaded photo.
 // The API key lives in a Vercel Environment Variable (ANTHROPIC_API_KEY), never in the repo.
-const MODEL = process.env.MODEL || "claude-haiku-4-5";
+const MODEL = process.env.MODEL || "claude-sonnet-4-6";
 
 const STYLES = {
   triptych:  "a surreal cinematic 'micro-movie' in three quick beats (a moment before, the scene, an escalation after). Give it punchy film-still energy.",
@@ -48,9 +48,9 @@ ${ctx}
 
 Rules:
 - Keep it SHORT: 1-4 sentences. Punchy, vivid, surprising.
-- Do NOT literally describe the photo. Invent a tiny absurd world around it.
+- NEVER describe what is literally in the photo. Do not mention the people, objects, clothing, location, or the fact that it's a photo at all (no "three men", "someone eating", "in this picture", "the camera"). Treat the image only as a private spark for mood and color, then invent a tiny absurd world that stands on its own.
 - Always END on a forward-looking HOOK that makes the reader want the next chapter.
-- The comedy is shared by people who were actually there — lean into in-joke energy.
+- Keep continuity: reuse the saga's recurring characters and pay off the previous cliffhanger.
 Return JSON only.`;
 }
 
