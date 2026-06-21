@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PlotTwist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Newsreader:ital@0;1&family=Anton&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Oswald:wght@600;700&family=Playfair+Display:wght@700;900&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:#0f0d15;color:#fff;-webkit-text-size-adjust:100%}
+  .app{max-width:460px;margin:0 auto;min-height:100vh;background:radial-gradient(900px 520px at 50% -5%,#2a1c3e 0%,#140f1f 45%,#0f0d15 100%);position:relative;overflow-x:hidden}
+  button{font-family:inherit}
+  .hidden{display:none!important}
+
+  /* ===== LANDING ===== */
+  #landing{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:34px 26px}
+  #landing .logo{font-family:'Anton';font-size:46px;letter-spacing:1px}
+  #landing .logo b{color:#ff5a36}
+  #landing .sub{opacity:.72;font-size:15px;margin-top:10px;line-height:1.5;max-width:300px}
+  .preview{margin:30px 0 24px;width:240px;border-radius:20px;overflow:hidden;box-shadow:0 24px 50px rgba(0,0,0,.55);transform:rotate(-2deg)}
+  .preview .pimg{height:155px;background-size:cover;background-position:center 32%;background-image:linear-gradient(135deg,#ff5a36,#6d2e46)}
+  .preview .pcap{background:#faf7f1;color:#1c1a17;font-family:'Fraunces',serif;font-style:italic;font-size:13px;line-height:1.35;padding:12px 14px;text-align:left}
+  .cta{width:100%;max-width:330px;border:none;cursor:pointer;font-weight:800;font-size:17px;padding:17px;border-radius:18px;margin-top:12px;position:relative;overflow:hidden}
+  .cta input{position:absolute;inset:0;opacity:0;font-size:0}
+  .cta.main{background:#ff5a36;color:#fff;box-shadow:0 12px 26px rgba(255,90,54,.5)}
+  .cta.alt{background:#221c30;color:#e9e3f5;border:1px solid #352c48}
+  #landing .preset{margin-top:18px;font-size:12px;opacity:.55;line-height:1.5}
+  #landing .preset b{color:#ff8a6a}
+
+  /* ===== APP BAR ===== */
+  .appbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;background:linear-gradient(180deg,#140f1f 70%,transparent)}
+  .appbar .b{font-family:'Anton';font-size:20px}.appbar .b b{color:#ff5a36}
+  .appbar .right{display:flex;gap:8px;align-items:center}
+  .iconbtn{background:#1d1830;border:1px solid #352c48;color:#e9e3f5;font-size:12px;font-weight:700;padding:7px 11px;border-radius:30px;cursor:pointer}
+  .streak{font-size:12px;font-weight:700;background:#231a13;border:1px solid #4a3320;color:#ffb070;padding:6px 10px;border-radius:30px}
+
+  /* ===== SAGA HEAD ===== */
+  .shead{padding:6px 20px 2px}
+  .shead .kick{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#ff8a6a;font-weight:800}
+  .shead .title{font-family:'Fraunces',serif;font-weight:700;font-size:25px;line-height:1.1;margin:6px 0 4px}
+  .shead .meta{font-size:12px;opacity:.6}
+  .lore{display:flex;gap:8px;overflow-x:auto;padding:14px 20px 4px;scrollbar-width:none}
+  .lore::-webkit-scrollbar{display:none}
+  .lore .lc{flex:0 0 auto;font-size:12px;font-weight:600;background:#1c1826;border:1px solid #2f2940;color:#d6cfe6;padding:7px 12px;border-radius:30px;white-space:nowrap}
+  .lore .lc b{color:#ff8a6a;font-weight:700}
+  .lore .empty{font-size:12px;opacity:.4;padding:7px 0}
+
+  /* ===== TIMELINE ===== */
+  .tl{position:relative;padding:16px 18px 0 18px}
+  .tl.thread::before{content:"";position:absolute;left:33px;top:26px;bottom:24px;width:2px;background:linear-gradient(#ff5a36,#6d2e46 85%,transparent)}
+  .chap{position:relative;padding-left:34px;margin-bottom:18px}
+  .node{position:absolute;left:0;top:6px;width:30px;height:30px;border-radius:50%;background:#ff5a36;color:#fff;font-family:'Anton';font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px #140f1f}
+
+  /* card skin via vars */
+  .saga{--cbg:#faf7f1;--cink:#27241f;--cacc:#ff5a36;--chk:#6d2e46;--chkbg:#f3e7ea;--cfont:'Fraunces',serif;--cbody:'Newsreader',serif;--crad:18px;--cbd:none;--csh:0 12px 30px rgba(0,0,0,.45)}
+  .saga.skin-comic{--cbg:#fffdf5;--cink:#111;--cacc:#ff2e63;--chk:#111;--chkbg:#ffe7ef;--cfont:'Anton',sans-serif;--cbody:'Plus Jakarta Sans',sans-serif;--cbd:3px solid #111;--csh:6px 6px 0 #111;--crad:14px}
+  .saga.skin-cinema{--cbg:#15131a;--cink:#f1ece2;--cacc:#c9a25f;--chk:#d9b777;--chkbg:#221d16;--cfont:'Instrument Serif',serif;--cbody:'Instrument Serif',serif}
+  .saga.skin-editorial{--cbg:#0c0c0e;--cink:#e7e2d8;--cacc:#c98d95;--chk:#c98d95;--chkbg:#191417;--cfont:'Playfair Display',serif;--cbody:'Newsreader',serif;--cbd:1px solid #2a2a2e}
+  .saga.skin-playful{--cbg:#fffefc;--cink:#1f1b18;--cacc:#ff6b3d;--chk:#d8541f;--chkbg:#fff1e8;--cfont:'Bricolage Grotesque',sans-serif;--cbody:'Plus Jakarta Sans',sans-serif;--crad:24px}
+  .saga.skin-tabloid{--cbg:#f6f3ea;--cink:#161616;--cacc:#d12027;--chk:#d12027;--chkbg:#fdeaea;--cfont:'Oswald',sans-serif;--cbody:'Newsreader',serif;--cbd:2px solid #161616;--crad:12px}
+
+  .ccard{background:var(--cbg);border-radius:var(--crad);overflow:hidden;border:var(--cbd);box-shadow:var(--csh)}
+  .ph{height:200px;background-size:cover;background-position:center 32%}
+  .ckick{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--cacc);font-weight:800;padding:12px 16px 0}
+  .ctitle{font-family:var(--cfont);font-weight:700;font-size:20px;line-height:1.1;color:var(--cink);padding:4px 16px 0}
+  .ctext{font-family:var(--cbody);font-size:16px;line-height:1.5;color:var(--cink);padding:8px 16px 12px}
+  .chook{background:var(--chkbg);color:var(--chk);font-weight:700;font-size:13px;padding:11px 16px}
+  .crow{display:flex;gap:8px;padding:10px 12px;border-top:1px solid rgba(0,0,0,.06)}
+  .crow button{flex:1;border:none;background:transparent;color:var(--cink);opacity:.7;font-size:12px;font-weight:700;padding:6px;border-radius:8px;cursor:pointer}
+  .cont{padding-left:34px;margin:-8px 0 10px}
+  .cont span{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#9a8f7a;background:#1a1622;border:1px dashed #3a3350;padding:4px 10px;border-radius:20px}
+
+  /* generating shimmer */
+  .gen{padding-left:34px;margin-bottom:18px}
+  .gen .box{background:#1b1826;border:1px solid #2c2738;border-radius:18px;height:150px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#9890a8;font-weight:700;font-size:13px}
+  .gen .box::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);transform:translateX(-100%);animation:sh 1.1s infinite}
+  @keyframes sh{to{transform:translateX(100%)}}
+
+  /* ===== FOOTER ADD ===== */
+  .addwrap{position:sticky;bottom:0;z-index:30;background:linear-gradient(0deg,#0f0d15 72%,transparent);padding:14px 18px calc(18px + env(safe-area-inset-bottom))}
+  .add{width:100%;border:none;cursor:pointer;font-weight:800;font-size:16px;padding:16px;border-radius:18px;background:#ff5a36;color:#fff;box-shadow:0 12px 26px rgba(255,90,54,.5);position:relative;overflow:hidden}
+  .add input{position:absolute;inset:0;opacity:0;font-size:0}
+  .add2{width:100%;border:none;cursor:pointer;font-weight:700;font-size:14px;padding:12px;border-radius:14px;background:#1f1830;color:#e9e3f5;border:1px solid #352c48;margin-top:10px}
+  .tagline{text-align:center;font-size:11px;opacity:.5;margin-top:10px;line-height:1.5}
+  .tagline b{color:#ff8a6a}
+
+  /* ===== CUSTOMIZE SHEET ===== */
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#15121d;border-top:1px solid #2c2738;border-radius:22px 22px 0 0;max-width:460px;margin:0 auto;transform:translateY(110%);transition:transform .28s ease;padding-bottom:calc(16px + env(safe-area-inset-bottom));max-height:80vh;overflow-y:auto}
+  .sheet.open{transform:translateY(0)}
+  .sheet .grab{width:40px;height:4px;background:#3a3350;border-radius:4px;margin:10px auto 4px}
+  .sheet h3{font-size:14px;font-weight:800;padding:8px 18px 0}
+  .rowlbl{display:flex;align-items:center;gap:8px;padding:16px 18px 8px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#9890a8;font-weight:700}
+  .rowlbl .hint{margin-left:auto;font-size:10px;opacity:.6;text-transform:none;letter-spacing:0}
+  .swipe{display:flex;gap:10px;overflow-x:auto;padding:0 18px 4px;scroll-snap-type:x mandatory;scrollbar-width:none}
+  .swipe::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;scroll-snap-align:center;cursor:pointer;background:#1b1826;border:1.5px solid #2c2738;border-radius:16px;padding:11px 14px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:82px;transition:.15s}
+  .chip .e{font-size:23px}
+  .chip .n{font-size:11px;font-weight:700;color:#cfc8db;white-space:nowrap}
+  .chip.on{background:#2a1a1e;border-color:#ff5a36;transform:translateY(-2px)}
+  .chip.on .n{color:#ff8a6a}
+  .donebtn{display:block;width:calc(100% - 36px);margin:16px 18px 4px;background:#ff5a36;color:#fff;border:none;font-weight:800;font-size:15px;padding:14px;border-radius:14px;cursor:pointer}
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:55;opacity:0;pointer-events:none;transition:.25s}
+  .scrim.on{opacity:1;pointer-events:auto}
+
+  .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:#20c4a8;color:#06201a;font-weight:700;font-size:13px;padding:10px 18px;border-radius:30px;opacity:0;transition:.3s;z-index:70;pointer-events:none}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style><script>window.__USE_AI=true;</script></head>
+<body>
+<div class="app">
+
+  <!-- LANDING -->
+  <div id="landing">
+    <div class="logo">Plot<b>Twist</b></div>
+    <div class="sub">Drop in a photo. Get a tiny, ridiculous story. Watch the saga grow.</div>
+    <div class="preview"><div class="pimg" id="prevImg"></div><div class="pcap">"You don't finish the wrap. The wrap finishes Tuesday."</div></div>
+    <label class="cta main">📷 Add a photo<input id="pickStart" type="file" accept="image/*"></label>
+    <button class="cta alt" id="surpriseStart">🎲 Surprise me</button>
+    <div class="preset">Style: <b id="presetStyle">🎬 Triptych</b> · Look: <b>The Combo</b> — already set.<br>Just tap. Change it anytime.</div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="main" class="hidden">
+    <div class="appbar">
+      <div class="b">Plot<b>Twist</b></div>
+      <div class="right">
+        <div class="streak" id="streak">🔥 1</div>
+        <button class="iconbtn" id="openSheet">🎨 Style</button>
+        <button class="iconbtn" id="newSaga">✨ New</button>
+      </div>
+    </div>
+    <div class="shead">
+      <div class="kick">Your ongoing story</div>
+      <div class="title" id="sagaTitle">—</div>
+      <div class="meta" id="sagaMeta">—</div>
+    </div>
+    <div class="lore" id="lore"></div>
+    <div class="tl thread"><div class="saga" id="saga"></div><div id="genSlot"></div></div>
+    <div class="addwrap">
+      <label class="add">＋ Add the next photo<input id="pickNext" type="file" accept="image/*"></label>
+      <button class="add2" id="surpriseNext">🎲 Surprise me — continue it for me</button>
+      <div class="tagline">Every photo you add <b>continues this same story.</b><br>New characters stick. Old jokes come back.</div>
+    </div>
+  </div>
+
+  <!-- CUSTOMIZE SHEET -->
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet">
+    <div class="grab"></div>
+    <h3>Make it yours</h3>
+    <div class="rowlbl">Story style <span class="hint">swipe →</span></div>
+    <div class="swipe" id="styleRow"></div>
+    <div class="rowlbl">Look <span class="hint">swipe →</span></div>
+    <div class="swipe" id="lookRow"></div>
+    <button class="donebtn" id="sheetDone">Done</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+"use strict";
+var DEMO = [];  // array of data-URI photos for "surprise me" + landing sample
+
+/* ---------- styles & looks ---------- */
+var STYLES = [
+  {id:"triptych", e:"🎬", n:"Triptych"},
+  {id:"oneliner", e:"⚡", n:"One-Liner"},
+  {id:"noir",     e:"🕵️", n:"Noir"},
+  {id:"fantasy",  e:"🐉", n:"Fantasy"},
+  {id:"nature",   e:"🎙️", n:"Nature Doc"},
+  {id:"bedtime",  e:"🌙", n:"Bedtime"},
+  {id:"truecrime",e:"🎧", n:"True Crime"},
+  {id:"tabloid",  e:"📰", n:"Tabloid"},
+  {id:"hero",     e:"🦸", n:"Hero"},
+  {id:"soap",     e:"💔", n:"Soap"},
+  {id:"myth",     e:"🏛️", n:"Myth"}
+];
+var LOOKS = [
+  {id:"", n:"Combo"},{id:"skin-comic", n:"Comic"},{id:"skin-cinema", n:"Cinema"},
+  {id:"skin-editorial", n:"Editorial"},{id:"skin-playful", n:"Playful"},{id:"skin-tabloid", n:"Tabloid"}
+];
+function styleById(id){for(var i=0;i<STYLES.length;i++)if(STYLES[i].id===id)return STYLES[i];return STYLES[0];}
+
+/* ---------- story engine (placeholder for real AI) ---------- */
+var SUBJECTS=["the smallest one","the one in charge","our hero","the bravest of the household","the one who knew too much","the prime suspect","the chosen one","the only witness","the family's loose cannon"];
+var THINGS=[
+  {t:"a smaller, angrier wrap", l:"The Angrier Wrap", e:"🌯"},
+  {t:"the missing biscuit crown", l:"The Biscuit Crown", e:"👑"},
+  {t:"a tiny rolled note with a name on it", l:"The Note", e:"📜"},
+  {t:"the gray cushion", l:"The Gray Cushion", e:"🛋️"},
+  {t:"a brass key that hums off-key", l:"The Brass Key", e:"🗝️"},
+  {t:"a second, unscheduled moon", l:"The Second Moon", e:"🌙"},
+  {t:"a haunted spoon", l:"The Haunted Spoon", e:"🥄"},
+  {t:"the last good snack", l:"The Last Snack", e:"🍪"},
+  {t:"a map the dog drew", l:"The Dog's Map", e:"🗺️"}
+];
+var FOES=[
+  {t:"the Squirrel Cartel", l:"Squirrel Cartel", e:"🐿️"},
+  {t:"the Burrito Empire", l:"Burrito Empire", e:"🌯"},
+  {t:"the Vacuum Oracle", l:"Vacuum Oracle", e:"🌀"},
+  {t:"the Committee of Pigeons", l:"Committee of Pigeons", e:"🕊️"},
+  {t:"the Furniture That Remembers", l:"The Furniture", e:"🛋️"},
+  {t:"the Soft Clocks", l:"The Soft Clocks", e:"⏰"},
+  {t:"the Mayor of the Laundry Basket", l:"The Laundry Mayor", e:"🧺"}
+];
+var PLACES=["the Couch Citadel","the rainbow road","the fire that only burns secrets","the kitchen that keeps time","the parking lot of lost things","the hallway with opinions"];
+var VERBS=["declared war on","accidentally befriended","betrayed","out-ran","negotiated badly with","crowned","insulted","woke"];
+var HOOKS=["But {THING} was already missing.","{FOE} does not forgive.","Someone here is lying — probably the fridge.","And then the clocks went soft.","The bill for all this arrives at sundown.","Nobody mentioned the second one.","To be continued…"];
+var OPENERS=["It got worse. ","By morning, ","Naturally, ","Against all advice, ","What nobody expected: ","Of course, "];
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function addLore(saga,o){
+  for(var i=0;i<saga.lore.length;i++)if(saga.lore[i].name.toLowerCase()===o.l.toLowerCase())return;
+  saga.lore.push({emoji:o.e,name:o.l});
+}
+function core(saga){
+  var fo=(saga._foeObj&&Math.random()<.55)?saga._foeObj:pick(FOES);
+  var th=(saga._thingObj&&Math.random()<.5)?saga._thingObj:pick(THINGS);
+  saga._foeObj=fo;saga._thingObj=th;
+  addLore(saga,fo);addLore(saga,th);
+  return {foe:fo.t,thing:th.t,place:pick(PLACES),verb:pick(VERBS),subj:pick(SUBJECTS)};
+}
+function mkHook(c){var h=pick(HOOKS).split("{THING}").join(c.thing).split("{FOE}").join(c.foe);return h.charAt(0).toUpperCase()+h.slice(1);}
+function genChapter(saga, idx){
+  var c=core(saga);
+  var op=idx>0?pick(OPENERS):"";
+  var s=saga.styleId, title="", text="", kick="Chapter "+(idx+1);
+  if(s==="triptych"){title=cap(c.thing);kick="Chapter "+(idx+1)+" · Micro-Movie";text=cap(c.subj)+" "+c.verb+" "+c.foe+"; the air tasted like a decision; somewhere, "+c.thing+" began to glow.";}
+  else if(s==="oneliner"){text=op+cap(c.subj)+" "+c.verb+" "+c.foe+" over "+c.thing+" — and "+c.place+" has not been the same since.";}
+  else if(s==="noir"){kick="Chapter "+(idx+1)+" · The "+cap(c.thing.replace(/^(a|an|the)\s+/i,'').split(',')[0])+" Job";text="I knew "+c.thing+" meant trouble the second it walked in. "+cap(c.subj)+" wouldn't talk. "+cap(c.foe)+" already had.";}
+  else if(s==="fantasy"){text="And lo, "+c.subj+" "+c.verb+" "+c.foe+", for the prophecy spoke of "+c.thing+" returning to "+c.place+".";}
+  else if(s==="nature"){text="Here we observe "+c.subj+", mid-strike. Note the fearless grip. They have not rested since "+c.foe+" claimed "+c.place+".";}
+  else if(s==="bedtime"){text="Once upon a sleepy day, "+c.subj+" found "+c.thing+" napping in "+c.place+'. "Shhh," it whispered. "'+cap(c.foe)+' is listening."';}
+  else if(s==="truecrime"){text="Investigators still can't explain how "+c.thing+" ended up in "+c.place+". "+cap(c.subj)+" was the last to see it. "+cap(c.foe)+" isn't talking.";}
+  else if(s==="tabloid"){title=(c.subj+" "+c.verb+" "+c.foe+"!").toUpperCase();kick="Exclusive · Chapter "+(idx+1);text="Witnesses are stunned. Sources confirm "+c.thing+" was involved. Experts remain baffled.";}
+  else if(s==="hero"){text="In one move, "+c.subj+" absorbed the power of "+c.thing+". "+cap(c.place)+" would never be safe again — and "+c.foe+" felt it from afar.";}
+  else if(s==="soap"){text='"You knew," '+c.subj+' whispered. "You knew about '+c.thing+' the whole time." '+cap(c.foe)+" gasped. Thunder, somewhere indoors.";}
+  else if(s==="myth"){text="So it was decreed: "+c.subj+" "+c.verb+" "+c.foe+", and "+c.thing+" was lost to "+c.place+" for a thousand naps.";}
+  else {text=cap(c.subj)+" "+c.verb+" "+c.foe+".";}
+  return {kick:kick,title:title,text:cap(text),hook:"→ "+mkHook(c)};
+}
+function genTitle(saga){
+  var raw=(saga._thingObj&&saga._thingObj.l)||(saga._foeObj&&saga._foeObj.l)||"The Unexpected";
+  var base=raw.replace(/^The\s+/,'');
+  return pick(["The "+base+" Affair","The Tale of "+base,base+": A Saga","The "+base+" That Wouldn't End","Days of the "+base]);
+}
+
+/* ---------- state ---------- */
+var KEY="plottwist_v1";
+var state={sagas:[],current:null, defStyle:"triptych", defLook:""};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function load(){try{var s=localStorage.getItem(KEY);if(s)state=JSON.parse(s);}catch(e){}}
+function curSaga(){for(var i=0;i<state.sagas.length;i++)if(state.sagas[i].id===state.current)return state.sagas[i];return null;}
+
+/* ---------- DOM helpers ---------- */
+function el(tag,cls){var n=document.createElement(tag);if(cls)n.className=cls;return n;}
+function elt(tag,cls,txt){var n=el(tag,cls);n.textContent=txt;return n;}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},1800);}
+
+/* ---------- rendering ---------- */
+function renderLore(saga){
+  var box=document.getElementById('lore');box.textContent='';
+  if(!saga.lore.length){box.appendChild(elt('div','empty','New characters & running jokes will appear here…'));return;}
+  saga.lore.forEach(function(l){
+    var c=el('div','lc');var b=el('b');b.textContent=l.name;
+    c.appendChild(document.createTextNode(l.emoji+' '));c.appendChild(b);box.appendChild(c);
+  });
+}
+function chapterCard(saga, ch, idx, isLast){
+  var card=el('div','ccard');
+  var ph=el('div','ph');ph.style.backgroundImage="url('"+ch.img+"')";card.appendChild(ph);
+  card.appendChild(elt('div','ckick',ch.kick));
+  if(ch.title){card.appendChild(elt('div','ctitle',ch.title));}
+  card.appendChild(elt('div','ctext',ch.text));
+  card.appendChild(elt('div','chook',ch.hook));
+  if(isLast){
+    var row=el('div','crow');
+    var rr=elt('button',null,'🔀 Re-roll');
+    rr.addEventListener('click',function(){
+      var ng=genChapter(saga, idx);ng.img=ch.img;saga.chapters[idx]=ng;save();renderSaga();
+    });
+    var sh=elt('button',null,'📤 Share saga');
+    sh.addEventListener('click',shareSaga);
+    row.appendChild(rr);row.appendChild(sh);card.appendChild(row);
+  }
+  return card;
+}
+function renderSaga(){
+  var saga=curSaga();if(!saga)return;
+  document.getElementById('sagaTitle').textContent=saga.title;
+  document.getElementById('sagaMeta').textContent=saga.chapters.length+" chapter"+(saga.chapters.length===1?"":"s")+" · one connected saga"+(saga.chapters.length>1?" · still going":"");
+  document.getElementById('streak').textContent="🔥 "+saga.chapters.length;
+  renderLore(saga);
+  var wrap=document.getElementById('saga');wrap.textContent='';
+  wrap.className='saga '+(saga.lookId||'');
+  saga.chapters.forEach(function(ch,i){
+    var chap=el('div','chap');
+    var node=el('div','node');node.textContent=(i+1);chap.appendChild(node);
+    chap.appendChild(chapterCard(saga,ch,i,i===saga.chapters.length-1));
+    wrap.appendChild(chap);
+    if(i<saga.chapters.length-1){var c=el('div','cont');var s=el('span');s.textContent='↳ answered in Chapter '+(i+2);c.appendChild(s);wrap.appendChild(c);}
+  });
+}
+
+/* ---------- actions ---------- */
+function showMain(){document.getElementById('landing').classList.add('hidden');document.getElementById('main').classList.remove('hidden');}
+function newSaga(){
+  var s={id:'s'+Date.now(),title:'A New Saga',styleId:state.defStyle,lookId:state.defLook,lore:[],chapters:[],_foeObj:null,_thingObj:null};
+  state.sagas.push(s);state.current=s.id;save();return s;
+}
+function addChapter(imgURL){
+  var saga=curSaga();if(!saga){saga=newSaga();}
+  showMain();
+  // shimmer
+  var slot=document.getElementById('genSlot');slot.textContent='';
+  var g=el('div','gen');var box=el('div','box');box.textContent='✨ writing your chapter…';g.appendChild(box);slot.appendChild(g);
+  g.scrollIntoView({block:'center',behavior:'smooth'});
+  var idx=saga.chapters.length;
+  function finish(ch){
+    ch.img=imgURL;
+    if(ch.newLore&&ch.newLore.length){ch.newLore.forEach(function(n){if(!n)return;var dup=false;for(var i=0;i<saga.lore.length;i++)if(saga.lore[i].name.toLowerCase()===String(n).toLowerCase())dup=true;if(!dup)saga.lore.push({emoji:'✨',name:String(n)});});}
+    saga.chapters.push(ch);
+    if(idx===0){saga.title=ch.sagaTitle||genTitle(saga);}
+    slot.textContent='';
+    save();renderSaga();
+    setTimeout(function(){
+      var chaps=document.querySelectorAll('#saga .chap');
+      if(chaps.length)chaps[chaps.length-1].scrollIntoView({block:'center',behavior:'smooth'});
+    },60);
+  }
+  produceChapter(saga, idx, imgURL, finish);
+}
+function shrink(dataURL, cb){
+  try{
+    var im=new Image();
+    im.onload=function(){
+      var max=1024,w=im.width,h=im.height;
+      if(w>max||h>max){var r=Math.min(max/w,max/h);w=Math.round(w*r);h=Math.round(h*r);}
+      var c=document.createElement('canvas');c.width=w;c.height=h;
+      c.getContext('2d').drawImage(im,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',0.82));
+    };
+    im.onerror=function(){cb(dataURL);};
+    im.src=dataURL;
+  }catch(e){cb(dataURL);}
+}
+function produceChapter(saga, idx, imgURL, done){
+  if(!window.__USE_AI){ setTimeout(function(){done(genChapter(saga, idx));},700); return; }
+  shrink(imgURL, function(small){
+    var payload={styleId:saga.styleId, chapterIndex:idx, image:small,
+      saga:{title:saga.title, lore:(saga.lore||[]).map(function(l){return l.name;}),
+        lastHook:(saga.chapters[idx-1]||{}).hook||"", lastText:(saga.chapters[idx-1]||{}).text||""}};
+    fetch('/api/story',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .then(function(r){return r.ok?r.json():Promise.reject(r);})
+      .then(function(ch){ if(!ch||!ch.text) throw 0; done(ch); })
+      .catch(function(){ done(genChapter(saga, idx)); });
+  });
+}
+function readFile(file, cb){if(!file)return;var r=new FileReader();r.onload=function(){cb(r.result);};r.readAsDataURL(file);}
+function shareSaga(){
+  var saga=curSaga();if(!saga)return;
+  var lines=saga.chapters.map(function(ch,i){return (i+1)+'. '+(ch.title?ch.title+' — ':'')+ch.text;});
+  var txt='📸 '+saga.title+' (PlotTwist)\n\n'+lines.join('\n\n');
+  if(navigator.share){navigator.share({text:txt}).catch(function(){});}
+  else if(navigator.clipboard){navigator.clipboard.writeText(txt).then(function(){toast('Copied — go ruin the group chat 😈');},function(){toast('Could not copy here');});}
+  else toast('Sharing works on your phone');
+}
+
+/* ---------- customize sheet ---------- */
+function buildChips(rowId, items, getSel, onSel, isStyle){
+  var row=document.getElementById(rowId);row.textContent='';
+  items.forEach(function(it,i){
+    var c=el('div','chip');
+    var e=el('div','e');e.textContent=isStyle?it.e:'🎨';
+    var n=el('div','n');n.textContent=it.n;
+    c.appendChild(e);c.appendChild(n);
+    function refresh(){var on=getSel()===(isStyle?it.id:it.id);c.classList.toggle('on',on);}
+    c.addEventListener('click',function(){onSel(it.id);
+      var all=row.querySelectorAll('.chip');for(var k=0;k<all.length;k++)all[k].classList.remove('on');c.classList.add('on');
+      c.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
+    });
+    c._refresh=refresh;row.appendChild(c);
+  });
+  refreshChips(rowId,items,getSel,isStyle);
+}
+function refreshChips(rowId,items,getSel,isStyle){
+  var row=document.getElementById(rowId);var chips=row.querySelectorAll('.chip');
+  for(var i=0;i<chips.length;i++){var on=(getSel()===items[i].id);chips[i].classList.toggle('on',on);}
+}
+function openSheet(){document.getElementById('sheet').classList.add('open');document.getElementById('scrim').classList.add('on');
+  var saga=curSaga();
+  refreshChips('styleRow',STYLES,function(){return saga?saga.styleId:state.defStyle;},true);
+  refreshChips('lookRow',LOOKS,function(){return saga?saga.lookId:state.defLook;},false);
+}
+function closeSheet(){document.getElementById('sheet').classList.remove('open');document.getElementById('scrim').classList.remove('on');}
+
+/* ---------- wire up ---------- */
+function init(){
+  load();
+  if(DEMO[0])document.getElementById('prevImg').style.backgroundImage="url('"+DEMO[0]+"')";
+  document.getElementById('presetStyle').textContent="🎬 Triptych";
+
+  // landing
+  document.getElementById('pickStart').addEventListener('change',function(e){readFile(e.target.files[0],function(u){if(!curSaga())newSaga();addChapter(u);});});
+  document.getElementById('surpriseStart').addEventListener('click',function(){if(DEMO.length){if(!curSaga())newSaga();var s=curSaga();s.styleId=pick(STYLES).id;addChapter(pick(DEMO));}else{document.getElementById('pickStart').click();}});
+
+  // main
+  document.getElementById('pickNext').addEventListener('change',function(e){readFile(e.target.files[0],function(u){addChapter(u);});});
+  document.getElementById('surpriseNext').addEventListener('click',function(){if(DEMO.length){addChapter(pick(DEMO));}else{document.getElementById('pickNext').click();}});
+  document.getElementById('newSaga').addEventListener('click',function(){newSaga();renderSaga();toast('Fresh saga started ✨');window.scrollTo(0,0);});
+  document.getElementById('openSheet').addEventListener('click',openSheet);
+  document.getElementById('sheetDone').addEventListener('click',closeSheet);
+  document.getElementById('scrim').addEventListener('click',closeSheet);
+
+  // chips
+  buildChips('styleRow',STYLES,function(){var s=curSaga();return s?s.styleId:state.defStyle;},function(id){var s=curSaga();if(s){s.styleId=id;}state.defStyle=id;save();toast('Next chapters: '+styleById(id).e+' '+styleById(id).n);},true);
+  buildChips('lookRow',LOOKS,function(){var s=curSaga();return s?s.lookId:state.defLook;},function(id){var s=curSaga();if(s){s.lookId=id;save();renderSaga();}state.defLook=id;save();},false);
+
+  // resume or land
+  if(curSaga()&&curSaga().chapters.length){showMain();renderSaga();}
+}
+init();
+</script>
+</body></html>
