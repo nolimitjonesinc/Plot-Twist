@@ -47,10 +47,11 @@ function buildPrompt(body){
 ${ctx}
 
 Rules:
-- Keep it SHORT: 1-4 sentences. Punchy, vivid, surprising.
-- NEVER describe what is literally in the photo. Do not mention the people, objects, clothing, location, or the fact that it's a photo at all (no "three men", "someone eating", "in this picture", "the camera"). Treat the image only as a private spark for mood and color, then invent a tiny absurd world that stands on its own.
-- Always END on a forward-looking HOOK that makes the reader want the next chapter.
-- Keep continuity: reuse the saga's recurring characters and pay off the previous cliffhanger.
+- Build the story DIRECTLY from what you actually see in the photo — the people, animals, objects, clothing, setting, colors, the action. The reader must instantly recognize THEIR photo in it.
+- Don't write a flat literal caption ("a man in a hat at the beach"). Take the real things in the image and spin them into a tiny absurd, funny world: exaggerate them, give objects secret motives, make the ordinary epic, sinister, or heroic.
+- Keep it SHORT: 1-3 sentences. Punchy and surprising.
+- Always END on a forward-looking HOOK (start it with "→ ") that makes the reader want the next chapter.
+- Continue the saga: reuse recurring characters and pay off the previous cliffhanger.
 Return JSON only.`;
 }
 

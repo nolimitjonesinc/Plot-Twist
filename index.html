@@ -51,6 +51,12 @@
   .tl{position:relative;padding:16px 18px 0 18px}
   .tl.thread::before{content:"";position:absolute;left:33px;top:26px;bottom:24px;width:2px;background:linear-gradient(#ff5a36,#6d2e46 85%,transparent)}
   .chap{position:relative;padding-left:34px;margin-bottom:18px}
+  @keyframes chapIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .chap.reveal{animation:chapIn .4s ease both}
+  .emptySaga{text-align:center;padding:42px 26px 30px;opacity:.9}
+  .emptySaga .es-emoji{font-size:40px}
+  .emptySaga .es-t{font-weight:800;font-size:16px;margin-top:10px;color:#e9e3f5}
+  .emptySaga .es-d{font-size:13px;opacity:.6;margin-top:6px;line-height:1.5}
   .node{position:absolute;left:0;top:6px;width:30px;height:30px;border-radius:50%;background:#ff5a36;color:#fff;font-family:'Anton';font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px #140f1f}
 
   /* card skin via vars */
@@ -311,12 +317,22 @@ function renderSaga(){
   renderLore(saga);
   var wrap=document.getElementById('saga');wrap.textContent='';
   wrap.className='saga '+(saga.lookId||'');
+  if(!saga.chapters.length){
+    document.getElementById('sagaMeta').textContent='New story · add a photo to begin';
+    var e=el('div','emptySaga');
+    e.appendChild(elt('div','es-emoji','📖'));
+    e.appendChild(elt('div','es-t','Your story is blank — for now.'));
+    e.appendChild(elt('div','es-d','Tap ＋ Add the next photo below to write Chapter 1.'));
+    wrap.appendChild(e);
+    return;
+  }
   saga.chapters.forEach(function(ch,i){
-    var chap=el('div','chap');
+    var last=i===saga.chapters.length-1;
+    var chap=el('div','chap'+(last?' reveal':''));
     var node=el('div','node');node.textContent=(i+1);chap.appendChild(node);
-    chap.appendChild(chapterCard(saga,ch,i,i===saga.chapters.length-1));
+    chap.appendChild(chapterCard(saga,ch,i,last));
     wrap.appendChild(chap);
-    if(i<saga.chapters.length-1){var c=el('div','cont');var s=el('span');s.textContent='↳ answered in Chapter '+(i+2);c.appendChild(s);wrap.appendChild(c);}
+    if(!last){var c=el('div','cont');var s=el('span');s.textContent='↳ answered in Chapter '+(i+2);c.appendChild(s);wrap.appendChild(c);}
   });
 }
 
