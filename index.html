@@ -18,6 +18,10 @@
   .preview{margin:30px 0 24px;width:240px;border-radius:20px;overflow:hidden;box-shadow:0 24px 50px rgba(0,0,0,.55);transform:rotate(-2deg)}
   .preview .pimg{height:155px;background-size:cover;background-position:center 32%;background-image:linear-gradient(135deg,#ff5a36,#6d2e46)}
   .preview .pcap{background:#faf7f1;color:#1c1a17;font-family:'Fraunces',serif;font-style:italic;font-size:13px;line-height:1.35;padding:12px 14px;text-align:left}
+  .steps{display:flex;flex-direction:column;gap:11px;margin:26px 0 24px;width:100%;max-width:340px}
+  .step{display:flex;align-items:center;gap:14px;background:#1b1727;border:1px solid #2c2738;border-radius:14px;padding:14px 16px}
+  .step .se{font-size:24px;flex:0 0 auto}
+  .step .sl{font-size:14px;font-weight:600;color:#e9e3f5;text-align:left;line-height:1.3}
   .cta{width:100%;max-width:330px;border:none;cursor:pointer;font-weight:800;font-size:17px;padding:17px;border-radius:18px;margin-top:12px;position:relative;overflow:hidden}
   .cta input{position:absolute;inset:0;opacity:0;font-size:0}
   .cta.main{background:#ff5a36;color:#fff;box-shadow:0 12px 26px rgba(255,90,54,.5)}
@@ -110,11 +114,15 @@
   <!-- LANDING -->
   <div id="landing">
     <div class="logo">Plot<b>Twist</b></div>
-    <div class="sub">Drop in a photo. Get a tiny, ridiculous story. Watch the saga grow.</div>
-    <div class="preview"><div class="pimg" id="prevImg"></div><div class="pcap">"You don't finish the wrap. The wrap finishes Tuesday."</div></div>
-    <label class="cta main">📷 Add a photo<input id="pickStart" type="file" accept="image/*"></label>
-    <button class="cta alt" id="surpriseStart">🎲 Surprise me</button>
-    <div class="preset">Style: <b id="presetStyle">🎬 Triptych</b> · Look: <b>The Combo</b> — already set.<br>Just tap. Change it anytime.</div>
+    <div class="sub">Your photos become a ridiculous ongoing story.<br>Add a pic, get a tiny funny chapter — every photo continues the same saga.</div>
+    <div class="steps">
+      <div class="step"><div class="se">📷</div><div class="sl">Add a photo</div></div>
+      <div class="step"><div class="se">✨</div><div class="sl">Get a tiny, funny chapter about it</div></div>
+      <div class="step"><div class="se">📖</div><div class="sl">Keep adding — the story remembers &amp; grows</div></div>
+    </div>
+    <label class="cta main">📷 Add your first photo<input id="pickStart" type="file" accept="image/*"></label>
+    <button class="cta alt" id="surpriseStart">🎲 Surprise me with a sample</button>
+    <div class="preset">No sign-up · your photos stay private · 11 story styles to pick from</div>
   </div>
 
   <!-- MAIN APP -->
@@ -255,7 +263,7 @@ function genTitle(saga){
 
 /* ---------- state ---------- */
 var KEY="plottwist_v1";
-var state={sagas:[],current:null, defStyle:"triptych", defLook:""};
+var state={sagas:[],current:null, defStyle:"oneliner", defLook:""};
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 function load(){try{var s=localStorage.getItem(KEY);if(s)state=JSON.parse(s);}catch(e){}}
 function curSaga(){for(var i=0;i<state.sagas.length;i++)if(state.sagas[i].id===state.current)return state.sagas[i];return null;}
@@ -407,8 +415,6 @@ function closeSheet(){document.getElementById('sheet').classList.remove('open');
 /* ---------- wire up ---------- */
 function init(){
   load();
-  if(DEMO[0])document.getElementById('prevImg').style.backgroundImage="url('"+DEMO[0]+"')";
-  document.getElementById('presetStyle').textContent="🎬 Triptych";
 
   // landing
   document.getElementById('pickStart').addEventListener('change',function(e){readFile(e.target.files[0],function(u){if(!curSaga())newSaga();addChapter(u);});});
