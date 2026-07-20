@@ -1,5 +1,5 @@
 # PlotTwist — Status
-_Auto-updated by Status Brain on every push. Last change: Add Status Brain workflow._
+_Auto-updated by Status Brain on every push. Last change: Add Status Brain workflow and script for automated status reporting._
 
 **Status:** Live  
 **What it is:** A web app that turns photos into funny, ongoing surreal stories in multiple styles, with each new photo continuing the same saga.  
@@ -19,6 +19,7 @@ _Auto-updated by Status Brain on every push. Last change: Add Status Brain workf
 - Environment variable configuration for API key and model selection
 - Vercel-ready deployment (one-click import)
 - No-cache headers on landing page to keep UX fresh
+- Status Brain automation for tracking project progress in plain English
 
 ## Recent changes (newest first)
 - 2026-07-20 — Add Status Brain workflow and script for automated status reporting
@@ -31,7 +32,7 @@ _Auto-updated by Status Brain on every push. Last change: Add Status Brain workf
 - 2026-06-21 — Initial v1 launch: photo-to-saga app with serverless Claude function
 
 ## Reusable parts (for other projects)
-- **Status Brain** — automated plain-English project status from git commits and code state — `status-brain.mjs` and `.github/workflows/status-brain.yml`
+- **Status Brain** — automated plain-English project status reporting from git commits and code state — `status-brain.mjs` and `.github/workflows/status-brain.yml`
 - **Offline story fallback** — built-in story generator that runs client-side when API unavailable — embedded in `index.html`
 - **Vercel serverless Claude wrapper** — handles API key securely, no build step needed — `api/story.js`
 
